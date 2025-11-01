@@ -1,7 +1,10 @@
 
+using ECommerce.Domain.Contracts.Repository;
 using ECommerce.Domain.Contracts.Seed;
 using ECommerce.Presistence.Contexts;
 using ECommerce.Presistence.DataSeed;
+using ECommerce.Presistence.Repository;
+using ECommerce.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce
@@ -25,6 +28,9 @@ namespace ECommerce
             #region DataSeeding
             builder.Services.AddScoped<IDataSeeding, DataSeeding>();
             #endregion
+
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddAutoMapper(x => x.AddProfile(new MappingProfiles()));
 
             #endregion
 
