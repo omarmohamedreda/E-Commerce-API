@@ -8,7 +8,7 @@ namespace ECommerce
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static  void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +37,7 @@ namespace ECommerce
             #region Services
             var scope = app.Services.CreateScope();
             var ObjectSeeding = scope.ServiceProvider.GetRequiredService<IDataSeeding>();
-            ObjectSeeding.DataSeed(); 
+            ObjectSeeding.DataSeedAsync(); 
             #endregion
 
 

@@ -20,9 +20,10 @@ namespace ECommerce.Presistence.DataSeed
             _context = context;
         }
 
-        public void DataSeed()
+        public async Task DataSeedAsync()
         {
-            if(_context.Database.GetPendingMigrations().Any())
+            var pendingMigrations = await _context.Database.GetPendingMigrationsAsync();
+            if (pendingMigrations.Any())
             {
                 _context.Database.Migrate();
             }
@@ -33,41 +34,41 @@ namespace ECommerce.Presistence.DataSeed
             #region Brand
             if (!_context.Brands.Any())
             {
-                var BrandsData = File.ReadAllText(@"..\Infrastructure\ECommerce.Presistence\Data\brands.json");
-                var ProductBrands = JsonSerializer.Deserialize<List<ProductBrand>>(BrandsData);
+                var BrandsData = File.OpenRead(@"..\Infrastructure\ECommerce.Presistence\Data\brands.json");
+                var ProductBrands = await JsonSerializer.DeserializeAsync<List<ProductBrand>>(BrandsData);
 
                 if (ProductBrands is not null && ProductBrands.Any())
                 {
-                    _context.Brands.AddRange(ProductBrands);
+                    await _context.Brands.AddRangeAsync(ProductBrands);
                 }
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
 
             #endregion
             #region Types
             if (!_context.Types.Any())
             {
-                var TypesData = File.ReadAllText(@"..\Infrastructure\ECommerce.Presistence\Data\types.json");
-                var ProductTypes = JsonSerializer.Deserialize<List<ProductType>>(TypesData);
+                var TypesData = File.OpenRead(@"..\Infrastructure\ECommerce.Presistence\Data\types.json");
+                var ProductTypes = await JsonSerializer.DeserializeAsync<List<ProductType>>(TypesData);
 
                 if (ProductTypes is not null && ProductTypes.Any())
                 {
-                    _context.Types.AddRange(ProductTypes);
+                    await _context.Types.AddRangeAsync(ProductTypes);
                 }
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             #endregion
             #region Product
             if (!_context.Products.Any())
             {
-                var ProductsData = File.ReadAllText(@"..\Infrastructure\ECommerce.Presistence\Data\products.json");
-                var Products = JsonSerializer.Deserialize<List<Product>>(ProductsData);
+                var ProductsData = File.OpenRead(@"..\Infrastructure\ECommerce.Presistence\Data\products.json");
+                var Products = await JsonSerializer.DeserializeAsync<List<Product>>(ProductsData);
 
                 if (Products is not null && Products.Any())
                 {
-                    _context.Products.AddRange(Products);
+                    await _context.Products.AddRangeAsync(Products);
                 }
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             } 
             #endregion
 
