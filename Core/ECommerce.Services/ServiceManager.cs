@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Services
 {
-    internal class ServiceManager(IUnitOfWork _unitOfWork, IMapper _mapper) : IServiceManager
+    public class ServiceManager(IUnitOfWork _unitOfWork, IMapper _mapper) : IServiceManager
     {
 
         private readonly Lazy<IProductServices> _LazyProductServices = new Lazy<IProductServices>(() => new ProductServices(_unitOfWork, _mapper));

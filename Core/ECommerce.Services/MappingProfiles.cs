@@ -17,7 +17,8 @@ namespace ECommerce.Services
 
             CreateMap<Product, ProductDto>()
                 .ForMember(dest => dest.BrandName, option => option.MapFrom(src => src.Brand.Name))
-                .ForMember(dest => dest.TypeName, option => option.MapFrom(src => src.Type.Name));
+                .ForMember(dest => dest.TypeName, option => option.MapFrom(src => src.Type.Name))
+                .ForMember(dest => dest.PictureUrl, option => option.MapFrom<PictureUrlResolver>());
 
 
             CreateMap<ProductType, TypeDto>();

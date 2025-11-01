@@ -1,4 +1,5 @@
 
+using ECommerce.Abstraction;
 using ECommerce.Domain.Contracts.Repository;
 using ECommerce.Domain.Contracts.Seed;
 using ECommerce.Presistence.Contexts;
@@ -6,6 +7,8 @@ using ECommerce.Presistence.DataSeed;
 using ECommerce.Presistence.Repository;
 using ECommerce.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using AutoMapper;
 
 namespace ECommerce
 {
@@ -22,15 +25,25 @@ namespace ECommerce
             builder.Services.AddOpenApi();
 
             #region Add Configuration DB Service
+
             builder.Services.AddDbContext<StoreDbContext>(options =>
                     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            #region DataSeeding
+            //DataSeeding
             builder.Services.AddScoped<IDataSeeding, DataSeeding>();
-            #endregion
 
+            // UnitOfWork
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            //Picture URL Resolver
+            builder.Services.AddTransient<PictureUrlResolver>();
+
+            // AutoMapper Configuration
             builder.Services.AddAutoMapper(x => x.AddProfile(new MappingProfiles()));
+
+
+            // Service Manager
+            builder.Services.AddScoped<IServiceManager, ServiceManager>();
 
             #endregion
 
@@ -54,6 +67,7 @@ namespace ECommerce
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             app.UseAuthorization();
 
