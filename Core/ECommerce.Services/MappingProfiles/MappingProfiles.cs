@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ECommerce.Domain.Models.Product;
+using ECommerce.Services.Services;
 using ECommerce.Shared.DTOS;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECommerce.Services
+namespace ECommerce.Services.MappingProfiles
 {
     public class MappingProfiles: Profile
     {

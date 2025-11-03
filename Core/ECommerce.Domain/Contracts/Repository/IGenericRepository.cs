@@ -1,4 +1,5 @@
-﻿using ECommerce.Domain.Models;
+﻿using ECommerce.Domain.Contracts.Specifications;
+using ECommerce.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,10 @@ namespace ECommerce.Domain.Contracts.Repository
         Task AddAsync(TEntity entity);
         void Update(TEntity entity);
         void Delete(TEntity entity);
+
+        Task<IEnumerable<TEntity>> GetAllWihSpecificationsAsync(ISpecifications<TEntity> specifications);
+
+        Task<TEntity?> GetByIdWihSpecificationsAsync(ISpecifications<TEntity> specifications);
+
     }
 }

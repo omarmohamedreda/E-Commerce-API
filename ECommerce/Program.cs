@@ -5,10 +5,11 @@ using ECommerce.Domain.Contracts.Seed;
 using ECommerce.Presistence.Contexts;
 using ECommerce.Presistence.DataSeed;
 using ECommerce.Presistence.Repository;
-using ECommerce.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using AutoMapper;
+using ECommerce.Services.Services;
+using ECommerce.Services.MappingProfiles;
 
 namespace ECommerce
 {

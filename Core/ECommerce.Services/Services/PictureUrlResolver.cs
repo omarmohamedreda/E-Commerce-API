@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECommerce.Services
+namespace ECommerce.Services.Services
 {
     public class PictureUrlResolver(IConfiguration _configuration) : IValueResolver<Product, ProductDto, string>
     {

@@ -2,6 +2,7 @@
 using ECommerce.Abstraction;
 using ECommerce.Domain.Contracts.Repository;
 using ECommerce.Domain.Models.Product;
+using ECommerce.Services.Specifications;
 using ECommerce.Shared.DTOS;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECommerce.Services
+namespace ECommerce.Services.Services
 {
     public class ProductServices(IUnitOfWork _unitOfWork, IMapper _mapper) : IProductServices
     {
@@ -22,8 +23,9 @@ namespace ECommerce.Services
         }
 
         public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
-        {
-            var Products = await _unitOfWork.GetRepository<Product>().GetAllAsync();
+        { 
+            var Specification = new ProductSpecifications();   // Where null, Includes Brand and Type
+            var Products = await _unitOfWork.GetRepository<Product>().GetAllWihSpecificationsAsync(Specification);
             // Map Products to ProductDto
             return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(Products);
         }

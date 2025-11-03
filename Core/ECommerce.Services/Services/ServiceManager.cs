@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECommerce.Services
+namespace ECommerce.Services.Services
 {
     public class ServiceManager(IUnitOfWork _unitOfWork, IMapper _mapper) : IServiceManager
     {

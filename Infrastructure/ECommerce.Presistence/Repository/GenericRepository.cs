@@ -1,4 +1,5 @@
 ﻿using ECommerce.Domain.Contracts.Repository;
+using ECommerce.Domain.Contracts.Specifications;
 using ECommerce.Domain.Models;
 using ECommerce.Presistence.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -38,8 +39,15 @@ namespace ECommerce.Presistence.Repository
              _context.Set<TEntity>().Remove(entity);
         }
 
-      
+        public async Task<IEnumerable<TEntity>> GetAllWihSpecificationsAsync(ISpecifications<TEntity> specifications)
+        {
+            return await SpecificationsEvaluator.GreateQuery(_context.Set<TEntity>(), specifications).ToListAsync();
+            
+        }
 
-       
+        public Task<TEntity?> GetByIdWihSpecificationsAsync(ISpecifications<TEntity> specifications)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
