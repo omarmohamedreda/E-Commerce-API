@@ -15,5 +15,11 @@ namespace ECommerce.Services.Specifications
             AddInclude(p => p.Brand);
             AddInclude(p => p.Type);
         }
+
+        public ProductSpecifications(int id) : base(p=>p.Id == id)
+        {
+            AddInclude(p => p.Brand);
+            AddInclude(p => p.Type);
+        }
     }
 }

@@ -39,7 +39,8 @@ namespace ECommerce.Services.Services
 
         public async Task<ProductDto> GetProductByIdAsync(int id)
         {
-            var Product = await _unitOfWork.GetRepository<Product>().GetByIdAsync(id);
+            var Specification = new ProductSpecifications(id);   // Where id, Includes Brand and Type
+            var Product = await _unitOfWork.GetRepository<Product>().GetByIdWihSpecificationsAsync(Specification);
             // Map Products to ProductDto
             return _mapper.Map<Product,ProductDto>(Product);
         }

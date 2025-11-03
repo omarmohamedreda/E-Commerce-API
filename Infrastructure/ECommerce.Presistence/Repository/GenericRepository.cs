@@ -45,9 +45,9 @@ namespace ECommerce.Presistence.Repository
             
         }
 
-        public Task<TEntity?> GetByIdWihSpecificationsAsync(ISpecifications<TEntity> specifications)
+        public async Task<TEntity?> GetByIdWihSpecificationsAsync(ISpecifications<TEntity> specifications)
         {
-            throw new NotImplementedException();
+            return await SpecificationsEvaluator.GreateQuery(_context.Set<TEntity>(), specifications).FirstOrDefaultAsync();
         }
     }
 }
