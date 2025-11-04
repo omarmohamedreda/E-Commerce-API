@@ -12,7 +12,9 @@ namespace ECommerce.Services.Specifications
 {
     public class ProductSpecifications: BaseSpecifications<Product>
     {
-        public ProductSpecifications(ProductQueryParameters productQueryParameters) :base(P=>(!productQueryParameters.BrandId.HasValue || P.BrandId == productQueryParameters.BrandId) && (!productQueryParameters.TypeId.HasValue || P.TypeId == productQueryParameters.TypeId))
+        public ProductSpecifications(ProductQueryParameters productQueryParameters) 
+            :base(P=>(!productQueryParameters.BrandId.HasValue || P.BrandId == productQueryParameters.BrandId) && (!productQueryParameters.TypeId.HasValue || P.TypeId == productQueryParameters.TypeId)
+            && (string.IsNullOrEmpty(productQueryParameters.SearchValue) || P.Name.ToLower().Contains(productQueryParameters.SearchValue.ToLower())))
         {
             AddInclude(p => p.Brand);
             AddInclude(p => p.Type);
