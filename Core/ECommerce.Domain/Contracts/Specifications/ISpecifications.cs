@@ -13,5 +13,9 @@ namespace ECommerce.Domain.Contracts.Specifications
         Expression<Func<TEntity, bool>> Criteria { get; } // Where
 
         List<Expression<Func<TEntity, object>>> Includes { get; } // Includes
+
+        Expression<Func<TEntity, object>> OrderBy { get; } // OrderBy
+
+        Expression<Func<TEntity, object>> OrderByDescending { get; } // OrderByDescending 
     }
 }

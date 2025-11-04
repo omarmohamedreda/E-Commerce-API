@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ECommerce.Shared.DTOS;
+using ECommerce.Shared.Common;
 
 namespace ECommerce.Presentation.Controllers
 {
@@ -17,9 +18,9 @@ namespace ECommerce.Presentation.Controllers
 
         // Get All Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProducts(int? BrandId, int? TypeId)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProducts(int? BrandId, int? TypeId, ProductSortingOptions? sortingOptions)
         {
-            var Products = await _serviceManager.ProductServices.GetAllProductsAsync(BrandId, TypeId);
+            var Products = await _serviceManager.ProductServices.GetAllProductsAsync(BrandId, TypeId, sortingOptions);
             return Ok(Products);
         }
 

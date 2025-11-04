@@ -22,15 +22,27 @@ namespace ECommerce.Presistence
                 Query = Query.Where(specifications.Criteria);
             }
 
+            // Apply OrderBy
+            if (specifications.OrderBy != null)
+            {
+                Query = Query.OrderBy(specifications.OrderBy);
+            }
+
+
+            // Apply OrderByDescending
+            else if (specifications.OrderByDescending != null)
+            {
+                Query = Query.OrderByDescending(specifications.OrderByDescending);
+            }
+
+
+            // Apply Includes
             if (specifications.Includes != null && specifications.Includes.Any())
             {
                 Query = specifications.Includes.Aggregate(Query,(CurrentQuery, Expression) => CurrentQuery.Include(Expression));
             }
 
             return Query;
-
-
-
 
         }
     }
