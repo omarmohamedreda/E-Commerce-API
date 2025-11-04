@@ -22,9 +22,9 @@ namespace ECommerce.Services.Services
 
         }
 
-        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
+        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync(int? BrandId, int? TypeId)
         { 
-            var Specification = new ProductSpecifications();   // Where null, Includes Brand and Type
+            var Specification = new ProductSpecifications(BrandId,TypeId);   // Where null, Includes Brand and Type
             var Products = await _unitOfWork.GetRepository<Product>().GetAllWihSpecificationsAsync(Specification);
             // Map Products to ProductDto
             return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(Products);
