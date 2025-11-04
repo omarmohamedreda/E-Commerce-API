@@ -1,5 +1,6 @@
 ﻿using ECommerce.Domain.Models.Product;
 using ECommerce.Services.BaseSpecifications;
+using ECommerce.Shared;
 using ECommerce.Shared.Common;
 using System;
 using System.Collections.Generic;
@@ -11,12 +12,12 @@ namespace ECommerce.Services.Specifications
 {
     public class ProductSpecifications: BaseSpecifications<Product>
     {
-        public ProductSpecifications(int? BrandId, int? TypeId, ProductSortingOptions? sortingOptions) :base(P=>(!BrandId.HasValue || P.BrandId == BrandId) && (!TypeId.HasValue || P.TypeId == TypeId))
+        public ProductSpecifications(ProductQueryParameters productQueryParameters) :base(P=>(!productQueryParameters.BrandId.HasValue || P.BrandId == productQueryParameters.BrandId) && (!productQueryParameters.TypeId.HasValue || P.TypeId == productQueryParameters.TypeId))
         {
             AddInclude(p => p.Brand);
             AddInclude(p => p.Type);
 
-            switch (sortingOptions) 
+            switch (productQueryParameters.SortingOption) 
             {
                 case ProductSortingOptions.NameAsc:
                     AddOrderBy(p => p.Name);

@@ -1,12 +1,13 @@
 ﻿using ECommerce.Abstraction;
+using ECommerce.Shared;
+using ECommerce.Shared.Common;
+using ECommerce.Shared.DTOS;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using ECommerce.Shared.DTOS;
-using ECommerce.Shared.Common;
 
 namespace ECommerce.Presentation.Controllers
 {
@@ -18,9 +19,9 @@ namespace ECommerce.Presentation.Controllers
 
         // Get All Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProducts(int? BrandId, int? TypeId, ProductSortingOptions? sortingOptions)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProducts([FromQuery] ProductQueryParameters productQueryParameters)
         {
-            var Products = await _serviceManager.ProductServices.GetAllProductsAsync(BrandId, TypeId, sortingOptions);
+            var Products = await _serviceManager.ProductServices.GetAllProductsAsync(productQueryParameters);
             return Ok(Products);
         }
 
