@@ -49,5 +49,11 @@ namespace ECommerce.Presistence.Repository
         {
             return await SpecificationsEvaluator.GreateQuery(_context.Set<TEntity>(), specifications).FirstOrDefaultAsync();
         }
+
+        public async Task<int> GetCountWihSpecificationsAsync(ISpecifications<TEntity> specifications)
+        {
+            return await SpecificationsEvaluator.GreateQuery(_context.Set<TEntity>(), specifications).CountAsync();
+
+        }
     }
 }

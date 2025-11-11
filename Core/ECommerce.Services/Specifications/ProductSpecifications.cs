@@ -38,6 +38,8 @@ namespace ECommerce.Services.Specifications
 
 
             }
+
+            ApplyPagination(productQueryParameters.PageIndex, productQueryParameters.PageSize);
         }
 
         public ProductSpecifications(int id) : base(p=>p.Id == id)

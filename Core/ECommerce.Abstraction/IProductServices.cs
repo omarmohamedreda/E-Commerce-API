@@ -12,7 +12,7 @@ namespace ECommerce.Abstraction
     public interface IProductServices
     {
         // Get All Product 
-        Task<IEnumerable<ProductDto>> GetAllProductsAsync(ProductQueryParameters productQueryParameters);
+        Task<PaginationResult<ProductDto>> GetAllProductsAsync(ProductQueryParameters productQueryParameters);
 
         // Get Product By Id
         Task<ProductDto> GetProductByIdAsync(int id);

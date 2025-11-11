@@ -45,7 +45,26 @@ namespace ECommerce.Services.BaseSpecifications
         protected void AddOrderByDescending(Expression<Func<TEntity, object>> _OrderByDesc)
         {
             OrderByDescending = _OrderByDesc;
-        } 
+        }
+        #endregion
+
+
+        #region Paginaation
+
+        public int Take { get; private set; }
+
+        public int Skip { get; private set; }
+
+        public bool IsPaginated { get; set; }
+
+        public void ApplyPagination(int PageIndex, int PageSize)
+        {
+            IsPaginated = true;
+            Take = PageSize;
+            Skip = (PageIndex - 1) * PageSize;
+
+        }
+
         #endregion
 
     }

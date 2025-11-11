@@ -20,5 +20,8 @@ namespace ECommerce.Domain.Contracts.Repository
 
         Task<TEntity?> GetByIdWihSpecificationsAsync(ISpecifications<TEntity> specifications);
 
+        Task<int> GetCountWihSpecificationsAsync(ISpecifications<TEntity> specifications);
+
+
     }
 }
