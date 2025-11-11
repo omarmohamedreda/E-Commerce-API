@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ECommerce.Abstraction;
 using ECommerce.Domain.Contracts.Repository;
+using ECommerce.Domain.Exceptions;
 using ECommerce.Domain.Models.Product;
 using ECommerce.Services.Specifications;
 using ECommerce.Shared;
@@ -21,7 +22,7 @@ namespace ECommerce.Services.Services
             var Brands = await _unitOfWork.GetRepository<ProductBrand>().GetAllAsync();
             // Map Products to ProductDto
             return _mapper.Map<IEnumerable<ProductBrand>, IEnumerable<BrandDto>>(Brands);
-
+             
         }
 
         public async Task<PaginationResult<ProductDto>> GetAllProductsAsync(ProductQueryParameters productQueryParameters)
@@ -50,6 +51,14 @@ namespace ECommerce.Services.Services
         {
             var Specification = new ProductSpecifications(id);   // Where id, Includes Brand and Type
             var Product = await _unitOfWork.GetRepository<Product>().GetByIdWihSpecificationsAsync(Specification);
+
+            // Exception if Product is null
+            if (Product == null)
+            {
+                throw new ProductNotFound(id);
+            }
+
+
             // Map Products to ProductDto
             return _mapper.Map<Product,ProductDto>(Product);
         }

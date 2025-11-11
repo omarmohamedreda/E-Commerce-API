@@ -1,15 +1,18 @@
 
+using AutoMapper;
 using ECommerce.Abstraction;
+using ECommerce.Coustom_Middlewares;
 using ECommerce.Domain.Contracts.Repository;
 using ECommerce.Domain.Contracts.Seed;
 using ECommerce.Presistence.Contexts;
 using ECommerce.Presistence.DataSeed;
 using ECommerce.Presistence.Repository;
+using ECommerce.Services.MappingProfiles;
+using ECommerce.Services.Services;
+using ECommerce.Shared.ErrorModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using AutoMapper;
-using ECommerce.Services.Services;
-using ECommerce.Services.MappingProfiles;
 
 namespace ECommerce
 {
@@ -48,6 +51,26 @@ namespace ECommerce
 
             #endregion
 
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = (context) =>
+                {
+                    var errors = context.ModelState.Where(M => M.Value.Errors.Any())
+                    .Select(M => new ValidationError()
+                    {
+                        FieldName = M.Key,
+                        Errors = M.Value.Errors.Select(E => E.ErrorMessage)
+                    });
+
+                    var Response = new ValidationErrorToReturn()
+                    {
+                       ValidationErrors = errors
+                    };
+
+                    return new BadRequestObjectResult(Response);
+
+                };
+            });
 
 
 
@@ -57,22 +80,17 @@ namespace ECommerce
             #region Services
             var scope = app.Services.CreateScope();
             var ObjectSeeding = scope.ServiceProvider.GetRequiredService<IDataSeeding>();
-            ObjectSeeding.DataSeedAsync(); 
+            ObjectSeeding.DataSeedAsync();
             #endregion
 
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.MapOpenApi();
-            }
+
+            // Configure Exception Middleware
+            app.UseMiddleware<CustomExceptionMiddleware>();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
 
             app.Run();
