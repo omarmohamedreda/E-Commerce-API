@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using ECommerce.Domain.Models.Basket;
 using ECommerce.Domain.Models.Product;
 using ECommerce.Services.Services;
 using ECommerce.Shared.DTOS;
+using ECommerce.Shared.DTOS.BasketDto_s;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +26,13 @@ namespace ECommerce.Services.MappingProfiles
 
             CreateMap<ProductType, TypeDto>();
             CreateMap<ProductBrand, BrandDto>();
+
+            #endregion
+
+            #region Basket
+
+            CreateMap<CustomerBasket,BasketDto>().ReverseMap(); 
+            CreateMap<BasketItem, BasketItemDto>().ReverseMap();
 
             #endregion
         }

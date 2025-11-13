@@ -13,6 +13,7 @@ using ECommerce.Shared.ErrorModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace ECommerce
 {
@@ -49,7 +50,13 @@ namespace ECommerce
             // Service Manager
             builder.Services.AddScoped<IServiceManager, ServiceManager>();
 
-            #endregion
+            // Redis Configuration
+            builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+            builder.Services.AddSingleton<IConnectionMultiplexer>((_) =>
+            { 
+                return ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection"));
+
+            });
 
             builder.Services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -64,13 +71,18 @@ namespace ECommerce
 
                     var Response = new ValidationErrorToReturn()
                     {
-                       ValidationErrors = errors
+                        ValidationErrors = errors
                     };
 
                     return new BadRequestObjectResult(Response);
 
                 };
-            });
+            }); 
+
+
+            #endregion
+
+
 
 
 

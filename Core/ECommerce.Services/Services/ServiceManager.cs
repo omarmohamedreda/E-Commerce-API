@@ -9,11 +9,14 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Services.Services
 {
-    public class ServiceManager(IUnitOfWork _unitOfWork, IMapper _mapper) : IServiceManager
+    public class ServiceManager(IUnitOfWork _unitOfWork, IMapper _mapper, IBasketRepository _BasketRepository) : IServiceManager
     {
 
         private readonly Lazy<IProductServices> _LazyProductServices = new Lazy<IProductServices>(() => new ProductServices(_unitOfWork, _mapper));
 
         public IProductServices ProductServices => _LazyProductServices.Value;
+
+        private readonly Lazy<IBasketServices> _LazyBasketServices = new Lazy<IBasketServices>(() => new BasketServices(_BasketRepository, _mapper));
+        public IBasketServices BasketServices => _LazyBasketServices.Value;
     }
 }
