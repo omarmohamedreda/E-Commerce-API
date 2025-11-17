@@ -1,4 +1,5 @@
 ﻿using ECommerce.Domain.Exceptions;
+using ECommerce.Shared.ErrorModels;
 
 namespace ECommerce.Coustom_Middlewares
 {
@@ -40,34 +41,43 @@ namespace ECommerce.Coustom_Middlewares
             {
                 _logger.LogError(ex, ex.Message);
 
+                // Response Object
+                var response = new ErrorToReturn()
+                {
+                    Message = ex.Message,
+                };
+
                 #region Response Header
 
                 // Set the response status 
                 context.Response.StatusCode = ex switch
                 {
                     NotFoundException => StatusCodes.Status404NotFound,
+                    UnAuthorizedException => StatusCodes.Status401Unauthorized,
+                    BadRequestException badRequestException => GetBadRequestErrors(badRequestException, response),
                     _ => StatusCodes.Status500InternalServerError
                 };
 
-
-                // code and content type 
-                context.Response.ContentType = "application/json";
-                #endregion
-
                 #region Response Body
+                response.StatusCode = context.Response.StatusCode;
 
-                // Response Object
-                var response = new
-                {
-                    StatusCode = context.Response.StatusCode,
-                    Message = ex.Message,
-                };
 
                 // Return Response as JSON
                 await context.Response.WriteAsJsonAsync(response);
+                context.Response.ContentType = "application/json";
 
                 #endregion
+
+                #endregion
+
+
             }
+        }
+
+        private int GetBadRequestErrors(BadRequestException exception,ErrorToReturn response)
+        {
+            response.Errors = exception.Errors;
+            return StatusCodes.Status400BadRequest;
         }
     }
 

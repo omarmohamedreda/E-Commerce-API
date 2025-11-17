@@ -1,6 +1,8 @@
 ﻿using ECommerce.Domain.Contracts.Seed;
+using ECommerce.Domain.Models.Identity;
 using ECommerce.Domain.Models.Product;
 using ECommerce.Presistence.Contexts;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,14 +13,8 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Presistence.DataSeed
 {
-    public class DataSeeding : IDataSeeding
+    public class DataSeeding(StoreDbContext _context, UserManager<ApplicationUser> _userManager, RoleManager<IdentityRole> _roleManager, StoreIdentityDbContex _identityDbContex) : IDataSeeding
     {
-        private readonly StoreDbContext _context;
-
-        public DataSeeding(StoreDbContext context)
-        {
-            _context = context;
-        }
 
         public async Task DataSeedAsync()
         {
@@ -75,6 +71,55 @@ namespace ECommerce.Presistence.DataSeed
             
             #endregion
 
+        }
+
+        public async Task IdentityInitializeAsync()
+        {
+            try
+            {
+                if (!_roleManager.Roles.Any())
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("Admin"));
+                    await _roleManager.CreateAsync(new IdentityRole("SuperAdmin"));
+                }
+
+                if (!_userManager.Users.Any())
+                {
+                    var user1 = new ApplicationUser
+                    {
+                        Email = "Omar@gmail.com",
+                        DisplayName = "Omar",
+                        PhoneNumber = "01055789631",
+                        UserName = "OmarMohamed"
+
+                    };
+
+                    var user2 = new ApplicationUser
+                    {
+                        Email = "Ali@gmail.com",
+                        DisplayName = "Ali",
+                        PhoneNumber = "01099789631",
+                        UserName = "AliSaad"
+
+                    };
+
+                    await _userManager.CreateAsync(user1, "Pa$$w0rd");
+                    await _userManager.CreateAsync(user2, "Pa$$w0rd");
+
+                    await _userManager.AddToRoleAsync(user1, "Admin");
+                    await _userManager.AddToRoleAsync(user2, "SuperAdmin");
+
+
+                }
+
+                await _identityDbContex.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            
         }
     }
 }

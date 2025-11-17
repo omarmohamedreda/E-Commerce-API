@@ -4,12 +4,14 @@ using ECommerce.Abstraction;
 using ECommerce.Coustom_Middlewares;
 using ECommerce.Domain.Contracts.Repository;
 using ECommerce.Domain.Contracts.Seed;
+using ECommerce.Domain.Models.Identity;
 using ECommerce.Presistence.Contexts;
 using ECommerce.Presistence.DataSeed;
 using ECommerce.Presistence.Repository;
 using ECommerce.Services.MappingProfiles;
 using ECommerce.Services.Services;
 using ECommerce.Shared.ErrorModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,14 +33,32 @@ namespace ECommerce
 
             #region Add Configuration DB Service
 
+            #region Database Configurations
             builder.Services.AddDbContext<StoreDbContext>(options =>
-                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                       options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            //DataSeeding
-            builder.Services.AddScoped<IDataSeeding, DataSeeding>();
+            builder.Services.AddDbContext<StoreIdentityDbContex>(options =>
+                    options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection")));
+
+
+            // Redis Configuration
+            
+            builder.Services.AddSingleton<IConnectionMultiplexer>((_) =>
+            {
+                return ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection"));
+
+            });
+            #endregion
+
+            #region Bussines Services
+            // Service Manager
+            builder.Services.AddScoped<IServiceManager, ServiceManager>();
 
             // UnitOfWork
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            // Basket Repository
+            builder.Services.AddScoped<IBasketRepository, BasketRepository>(); 
+            #endregion
 
             //Picture URL Resolver
             builder.Services.AddTransient<PictureUrlResolver>();
@@ -46,17 +66,15 @@ namespace ECommerce
             // AutoMapper Configuration
             builder.Services.AddAutoMapper(x => x.AddProfile(new MappingProfiles()));
 
+            //Identity Configuration
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<StoreIdentityDbContex>();
 
-            // Service Manager
-            builder.Services.AddScoped<IServiceManager, ServiceManager>();
 
-            // Redis Configuration
-            builder.Services.AddScoped<IBasketRepository, BasketRepository>();
-            builder.Services.AddSingleton<IConnectionMultiplexer>((_) =>
-            { 
-                return ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection"));
+            //DataSeeding
+            builder.Services.AddScoped<IDataSeeding, DataSeeding>();
 
-            });
+
+
 
             builder.Services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -89,10 +107,11 @@ namespace ECommerce
 
             var app = builder.Build();
 
-            #region Services
+            #region DataSeeding Service
             var scope = app.Services.CreateScope();
             var ObjectSeeding = scope.ServiceProvider.GetRequiredService<IDataSeeding>();
             ObjectSeeding.DataSeedAsync();
+            ObjectSeeding.IdentityInitializeAsync();
             #endregion
 
 
