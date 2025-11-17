@@ -3,6 +3,7 @@ using ECommerce.Abstraction;
 using ECommerce.Domain.Contracts.Repository;
 using ECommerce.Domain.Models.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Services.Services
 {
-    public class ServiceManager(IUnitOfWork _unitOfWork, IMapper _mapper, IBasketRepository _BasketRepository, UserManager<ApplicationUser> userManager) : IServiceManager
+    public class ServiceManager(IUnitOfWork _unitOfWork, IMapper _mapper, IBasketRepository _BasketRepository, UserManager<ApplicationUser> userManager, IConfiguration _configuration) : IServiceManager
     {
 
         private readonly Lazy<IProductServices> _LazyProductServices = new Lazy<IProductServices>(() => new ProductServices(_unitOfWork, _mapper));
@@ -22,7 +23,7 @@ namespace ECommerce.Services.Services
         public IBasketServices BasketServices => _LazyBasketServices.Value;
 
         
-        private readonly Lazy<IAuthenticationServices> _LazyAuthenticationService = new Lazy<IAuthenticationServices>(() => new AuthenticationServices(userManager));
+        private readonly Lazy<IAuthenticationServices> _LazyAuthenticationService = new Lazy<IAuthenticationServices>(() => new AuthenticationServices(userManager, _configuration));
         public IAuthenticationServices AuthenticationServices => _LazyAuthenticationService.Value;
-    }
+    } 
 }

@@ -11,7 +11,7 @@ namespace ECommerce.Presentation.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthenticationController(IServiceManager _serviceManager): ControllerBase
+    public class AuthenticationController(IServiceManager _serviceManager) : ControllerBase
     {
         [HttpPost("Login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
@@ -28,8 +28,14 @@ namespace ECommerce.Presentation.Controllers
             return Ok(User);
         }
 
+        [HttpGet("CheckEmail")]
+        public async Task<ActionResult<bool>> CheckEmail(string email)
+        {
+            var Result = await _serviceManager.AuthenticationServices.CheckEmailAsync()
+            return Ok(Result);
 
 
 
+        }
     }
 }

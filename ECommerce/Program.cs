@@ -11,11 +11,15 @@ using ECommerce.Presistence.Repository;
 using ECommerce.Services.MappingProfiles;
 using ECommerce.Services.Services;
 using ECommerce.Shared.ErrorModels;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
+using System.Text;
 
 namespace ECommerce
 {
@@ -53,7 +57,6 @@ namespace ECommerce
             #region Bussines Services
             // Service Manager
             builder.Services.AddScoped<IServiceManager, ServiceManager>();
-
             // UnitOfWork
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             // Basket Repository
@@ -95,13 +98,30 @@ namespace ECommerce
                     return new BadRequestObjectResult(Response);
 
                 };
-            }); 
+            });
 
 
             #endregion
 
 
+            // JWT Authentication Configuration
+            builder.Services.AddAuthentication(config =>
+            {
+                config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options => {
+              options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+              {
+                   ValidateIssuer = true,
+                   ValidIssuer = builder.Configuration.GetSection("JWTOptions")["Issuer"],
+                   ValidateAudience = true,
+                   ValidAudience = builder.Configuration.GetSection("JWTOptions")["Audience"],
+                   ValidateLifetime = true,
+                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JWTOptions")["SecurityKey"])),
+              };
 
+            });
 
 
 
@@ -120,6 +140,8 @@ namespace ECommerce
             app.UseMiddleware<CustomExceptionMiddleware>();
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseStaticFiles();
             app.UseAuthorization();
             app.MapControllers();

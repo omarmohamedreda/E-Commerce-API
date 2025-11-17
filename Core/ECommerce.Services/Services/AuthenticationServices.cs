@@ -3,15 +3,19 @@ using ECommerce.Domain.Exceptions;
 using ECommerce.Domain.Models.Identity;
 using ECommerce.Shared.DTOS.AuthenticationDto_s;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ECommerce.Services.Services
 {
-    public class AuthenticationServices(UserManager<ApplicationUser> _userManager) : IAuthenticationServices
+    public class AuthenticationServices(UserManager<ApplicationUser> _userManager, IConfiguration _configuration) : IAuthenticationServices
     {
         public async Task<UserDto> LoginAsync(LoginDto loginDto)
         {
@@ -23,10 +27,10 @@ namespace ECommerce.Services.Services
                 {
                     Email = user.Email,
                     DisplayName = user.DisplayName,
-                    Token = "To Do"
+                    Token = await CreateTokenAsync(user)
                 };
             }
-            else 
+            else
             {
                 throw new UnAuthorizedException();
             }
@@ -42,7 +46,7 @@ namespace ECommerce.Services.Services
                 UserName = registerDto.Email
             };
 
-            var Result = await  _userManager.CreateAsync(user, registerDto.Password);
+            var Result = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (Result.Succeeded)
             {
@@ -50,7 +54,7 @@ namespace ECommerce.Services.Services
                 {
                     DisplayName = user.DisplayName,
                     Email = user.Email,
-                    Token = "To Do"
+                    Token = await CreateTokenAsync(user)
                 };
             }
             else
@@ -62,5 +66,41 @@ namespace ECommerce.Services.Services
 
         }
 
+
+        // Generate JWT Token
+        private async Task<string> CreateTokenAsync(ApplicationUser user)
+        {
+            var Clamis = new List<Claim>()
+            {
+                new(ClaimTypes.Email, user.Email),
+                new(ClaimTypes.Name, user.DisplayName),
+                new(ClaimTypes.NameIdentifier, user.Id)
+
+
+            };
+            var Roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in Roles)
+            {
+                Clamis.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            var SecurityKey = _configuration.GetSection("JWTOptions")["SecurityKey"]; // Get from app settings
+            var Key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecurityKey));
+
+            var Creds = new SigningCredentials(Key, SecurityAlgorithms.HmacSha256);
+
+            var Token = new JwtSecurityToken
+                (
+                    issuer: _configuration.GetSection("JWTOptions")["Issuer"],
+                    audience: _configuration.GetSection("JWTOptions")["Audience"],
+                    claims: Clamis,
+                    expires: DateTime.Now.AddDays(3),
+                    signingCredentials: Creds
+                );
+
+            return new JwtSecurityTokenHandler().WriteToken(Token);
+
+
+        }
     }
 }
