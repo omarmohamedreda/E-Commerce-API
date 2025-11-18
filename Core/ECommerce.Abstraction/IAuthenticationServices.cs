@@ -15,5 +15,10 @@ namespace ECommerce.Abstraction
 
         // Register
         Task<UserDto> RegisterAsync(RegisterDto registerDto);
+
+        Task<bool> CheckEmailAsync(string email);
+        Task<AddressDto> GetCurrentUserAddress (string email);
+        Task<AddressDto> UpdateCurrentUserAddress(string email, AddressDto addressDto);
+        Task<UserDto> GetCurrentUser(string email);
     }
 }

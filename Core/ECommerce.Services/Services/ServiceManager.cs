@@ -23,7 +23,7 @@ namespace ECommerce.Services.Services
         public IBasketServices BasketServices => _LazyBasketServices.Value;
 
         
-        private readonly Lazy<IAuthenticationServices> _LazyAuthenticationService = new Lazy<IAuthenticationServices>(() => new AuthenticationServices(userManager, _configuration));
+        private readonly Lazy<IAuthenticationServices> _LazyAuthenticationService = new Lazy<IAuthenticationServices>(() => new AuthenticationServices(userManager, _configuration, _mapper));
         public IAuthenticationServices AuthenticationServices => _LazyAuthenticationService.Value;
     } 
 }
