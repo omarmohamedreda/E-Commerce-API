@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using ECommerce.Domain.Models.Basket;
 using ECommerce.Domain.Models.Identity;
+using ECommerce.Domain.Models.Order;
 using ECommerce.Domain.Models.Product;
-using ECommerce.Services.Services;
 using ECommerce.Shared.DTOS;
 using ECommerce.Shared.DTOS.AuthenticationDto_s;
 using ECommerce.Shared.DTOS.BasketDto_s;
+using ECommerce.Shared.DTOS.OrderDto_s;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,6 +44,21 @@ namespace ECommerce.Services.MappingProfiles
 
             CreateMap<Address, AddressDto>().ReverseMap();
 
+
+            #endregion
+
+            #region Order
+
+            CreateMap<AddressDto, OrderAddress>().ReverseMap();
+
+            CreateMap<Order, OrderToReturnDto>()
+                .ForMember(D => D.DeliveryMethod, options => options.MapFrom(src => src.DeliveryMethod.ShortName));
+
+            CreateMap<OrderItem, OrderItemDto>()
+                .ForMember(desc => desc.ProductName, options => options.MapFrom(src => src.Product.ProductName));
+                //.ForMember(dest => dest.PictureUrl, option => option.MapFrom<OrderPictureUrlReslover>());
+
+            CreateMap<DeliveryMethod, DeliveryMethodDto>().ReverseMap();
 
             #endregion
         }
