@@ -77,6 +77,9 @@ namespace ECommerce
             builder.Services.AddScoped<IDataSeeding, DataSeeding>();
 
 
+            // Cache Service Configuration
+            builder.Services.AddScoped<ICacheRepository, CacheRepository>();
+            builder.Services.AddScoped<ICacheServices, CacheServices>();
 
 
             builder.Services.Configure<ApiBehaviorOptions>(options =>

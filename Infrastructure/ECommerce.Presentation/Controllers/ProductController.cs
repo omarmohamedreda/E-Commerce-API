@@ -1,4 +1,5 @@
 ﻿using ECommerce.Abstraction;
+using ECommerce.Presentation.Attributes;
 using ECommerce.Shared;
 using ECommerce.Shared.Common;
 using ECommerce.Shared.DTOS;
@@ -21,6 +22,7 @@ namespace ECommerce.Presentation.Controllers
 
         // Get All Products
         [HttpGet]
+        [Cache]
         public async Task<ActionResult<PaginationResult<ProductDto>>> GetAllProducts([FromQuery] ProductQueryParameters productQueryParameters)
         {
             var Products = await _serviceManager.ProductServices.GetAllProductsAsync(productQueryParameters);
