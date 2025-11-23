@@ -13,7 +13,8 @@ namespace ECommerce.Abstraction
 
         public IAuthenticationServices AuthenticationServices { get; }
         public IOrderServices OrderServices { get; }
+        public IPaymentServices paymentServices { get; }
 
-    }
+        }
 }
  

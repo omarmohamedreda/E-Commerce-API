@@ -25,6 +25,13 @@ namespace ECommerce.Services.Services
             // Get Basket
             var Basket = await _basketRepository.GetBasketAsync(orderDto.BasketId) ?? throw new BasketNotFoundException(orderDto.BasketId);
 
+
+            ArgumentNullException.ThrowIfNull(Basket.PaymentIntentId);
+            var OrderRebo = _unitOfWork.GetRepository<Order>();
+            var Specification = new OrderWithPaymentIntentIdSpecificaion(Basket.PaymentIntentId);
+            var ExistingOrder = await OrderRebo.GetByIdWihSpecificationsAsync(Specification);
+            if (ExistingOrder is not null) OrderRebo.Delete(ExistingOrder);
+
             // Create OrderItems List
             List<OrderItem> OrderItems = [];
 
@@ -56,7 +63,7 @@ namespace ECommerce.Services.Services
             var Subtotal = OrderItems.Sum(item => item.Price * item.Quantity);
 
             // Create Order
-            var order = new Order(Email, OrderAddress, DeliveryMethod, OrderItems, Subtotal);
+            var order = new Order(Email, OrderAddress, DeliveryMethod, OrderItems, Subtotal, Basket.PaymentIntentId);
 
             await _unitOfWork.GetRepository<Order>().AddAsync(order);
 

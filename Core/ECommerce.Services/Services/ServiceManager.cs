@@ -36,7 +36,12 @@ namespace ECommerce.Services.Services
 
         public IOrderServices OrderServices => _LazyOrderService.Value;
 
+
         #endregion
+        
+        private readonly Lazy<IPaymentServices> _LazyPaymentServices = new Lazy<IPaymentServices>(() => new PaymentServices(_configuration, _BasketRepository, _unitOfWork, _mapper));
+        public IPaymentServices paymentServices => _LazyPaymentServices.Value;
+
     }
 }
  
